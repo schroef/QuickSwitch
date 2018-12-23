@@ -53,7 +53,12 @@
 ## v.0.0.3
 ## Changed
 ## 23-12-18 - General icons to workspace icons
-## 23-12-18 - Fixed typo in icons
+## 			- Fixed typo in icons
+
+## v.0.0.4
+## Changed
+## 23-12-18 - Quick render now visible in all screens
+
 
 #######################################################
 
@@ -62,7 +67,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch",
 	"author": "Rombout Versluijs",
-	"version": (0, 0, 3),
+	"version": (0, 0, 4),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -132,7 +137,7 @@ def add_hotkey():
 	#Add QS Render Engine
 	wm = bpy.context.window_manager
 	kc = wm.keyconfigs.addon
-	km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
+	km = kc.keymaps.new(name = "Screen", space_type = "EMPTY")
 	kmi = km.keymap_items.new("wm.call_menu", value='PRESS', type='E', alt=True, shift=True)
 	kmi.properties.name = "quick.switch_engine"
 	kmi.active = True
@@ -372,7 +377,7 @@ class QS_PT_AddonPreferences(AddonPreferences):
 		if getattr(self,"qsMenus") in ("Render Menu"):
 			wm = bpy.context.window_manager
 			kc = wm.keyconfigs.user
-			km = kc.keymaps['3D View']
+			km = kc.keymaps['Screen']
 			box=layout.box()
 			split = box.split()
 			col = split.column()

@@ -1,14 +1,14 @@
 # QuickSwitch
 
-QuickSwitch a helper to quick switch workspaces and view render menu in viewport. The Pie menu can be adjusted using the order of the WM menu. Also shortcuts can be added to all workspaces making it very easy and fast to switch to preferred workspace.
+QuickSwitch a helper to quick switch workspaces and view render menu in viewport. The Pie menu can be adjusted using the order of the WM menu. Also shortcuts can be added to all workspaces making it very easy and fast to switch to preferred workspace. It also allows you to quick switch render engine using a popup menu.
 
 > Some limitations are currently present due to Beta containing some bugs
 
-!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch_v0.0.3.jpg?v23-12-2018-v1)
+!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch_v0.0.4.jpg?v23-12-2018)
 
 > Choose either Pie menu or WM menu
 
-!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v0.0.3.jpg?v23-12-2018)
+!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v0.0.4.jpg?v23-12-2018)
 
 > Customise shortscuts from addon preferences
 
