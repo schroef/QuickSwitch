@@ -3,8 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.3] - 2018-12-23
 ### Changed
-- order of menu's is set by checking shortcuts
-- icons are now proper workspace icons
+- Order of menu's is set by checking shortcuts
+- Icons are now proper workspace icons
+- Fixed typo in icon names
 
 ## [0.0.2] - 2018-12-22
 ### Changed
@@ -17,7 +18,7 @@ All notable changes to this project will be documented in this file.
 ### New
 - Initial addon setup
 - Renamed all screens to workspace
-- convertion to Blender 2.80
+- Convertion to Blender 2.80
 
 ## Notes
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

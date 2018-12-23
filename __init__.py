@@ -53,6 +53,7 @@
 ## v.0.0.3
 ## Changed
 ## 23-12-18 - General icons to workspace icons
+## 23-12-18 - Fixed typo in icons
 
 #######################################################
 
@@ -234,7 +235,7 @@ class QS_MT_WorkspaceSwitchPieMenu(Menu):
 		kc = wm.keyconfigs.user
 		km = kc.keymaps['Screen']
 
-		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Composition','NODE_COMPOSITING'),('Scripting','CONSOLE')]
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE')]
 
 
 		for i in range(0,8):
@@ -264,7 +265,7 @@ class QS_MT_WorkspaceSwitchMenu(Menu):
 		#for i in range(0,len(avail_workspaces(self, context))):
 		#	layout.operator("workspace.set_layout", text='{}'.format(avail_workspaces(self, context)[i][1]), icon='SEQ_SPLITVIEW').wslayoutMenu=avail_workspaces(self, context)[i][1]
 
-		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Composition','NODE_COMPOSITING'),('Scripting','CONSOLE')]
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE')]
 
 		## Custom order
 		for i in range(0,len(avail_workspaces(self, context))):
