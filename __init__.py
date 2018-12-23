@@ -42,6 +42,17 @@
 ##
 ## 20-12-18	- updated preferences to preferences
 ## 22-12-18 - Merge QuickSwitch into this one
+##
+
+## QuickSwitch Merged
+##
+## v0.0.3
+## Changed
+## 22-12-18 - Added order for WM menu
+
+## v.0.0.3
+## Changed
+## 23-12-18 - General icons to workspace icons
 
 #######################################################
 
@@ -50,7 +61,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch",
 	"author": "Rombout Versluijs",
-	"version": (0, 0, 2),
+	"version": (0, 0, 3),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -59,10 +70,11 @@ bl_info = {
 
 import bpy
 import rna_keymap_ui
-
+from bl_operators.presets import AddPresetBase, PresetMenu
+#from . import AddPresetBase
 
 from bpy.types import (
-	Panel, WindowManager, AddonPreferences, Menu
+	Panel, WindowManager, AddonPreferences, Menu, Operator
 	)
 from bpy.props import (
 	EnumProperty, StringProperty, BoolProperty, IntProperty, FloatProperty
@@ -126,6 +138,41 @@ def add_hotkey():
 	addon_keymaps.append((km, kmi))
 
 
+class AddPresetQuickSwitch(AddPresetBase, Operator):
+	"""Add or remove a QuickSwitch Preset"""
+	bl_idname = "qs.preset_add"
+	bl_label = "Add QuickSwitch Preset"
+	preset_menu = "QS_PT_presets"
+
+	preset_defines = [
+		"qs = bpy.context.cloth"
+	]
+
+	preset_values = [
+		"qs.",
+		"qs.",
+		"qs.",
+		"qs.",
+		"qs.",
+		"qs.",
+	]
+
+	preset_subdir = "quickswitch"
+
+
+class QS_PT_presets(PresetMenu):
+	bl_label = "QuickSwitch Presets"
+	preset_subdir = "quickswitch"
+	preset_operator = "script.execute_preset"
+	draw = Menu.draw_preset
+
+#class RIGIFY_MT_SettingsPresetMenu(Menu):
+#    bl_label = "Setting Presets"
+#    preset_subdir = "rigify"
+#    preset_operator = "script.execute_preset"
+#    draw = Menu.draw_preset
+
+
 class QS_OT_QuickSwitchEngine(Menu):
 	bl_idname = "quick.switch_engine"
 	bl_label = "Render"
@@ -187,9 +234,19 @@ class QS_MT_WorkspaceSwitchPieMenu(Menu):
 		kc = wm.keyconfigs.user
 		km = kc.keymaps['Screen']
 
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Composition','NODE_COMPOSITING'),('Scripting','CONSOLE')]
+
+
 		for i in range(0,8):
 			kmi = get_hotkey_entry_item(km, "workspace.set_layout", "WorkspaceSwitcher"+str(i))
-			pie.operator("workspace.set_layout", text='{}'.format(kmi.properties.wslayoutMenu), icon='SEQ_SPLITVIEW').wslayoutMenu=kmi.properties.wslayoutMenu
+			if not kmi == None:
+				for k in range(0,len(icons)):
+					if kmi.properties.wslayoutMenu in icons[k][0]:
+						icon = icons[k][1]
+						break
+					else:
+						icon = 'PREFERENCES'
+				pie.operator("workspace.set_layout", text='{}'.format(kmi.properties.wslayoutMenu),icon=icon).wslayoutMenu=kmi.properties.wslayoutMenu
 
 
 class QS_MT_WorkspaceSwitchMenu(Menu):
@@ -199,25 +256,42 @@ class QS_MT_WorkspaceSwitchMenu(Menu):
 	def draw(self, context):
 		layout = self.layout
 
-		for i in range(0,len(avail_workspaces(self, context))):
-			layout.operator("workspace.set_layout", text='{}'.format(avail_workspaces(self, context)[i][1]), icon='SEQ_SPLITVIEW').wslayoutMenu=avail_workspaces(self, context)[i][1]
+		wm = bpy.context.window_manager
+		kc = wm.keyconfigs.user
+		km = kc.keymaps['Screen']
 
+		## Alphabetical order
+		#for i in range(0,len(avail_workspaces(self, context))):
+		#	layout.operator("workspace.set_layout", text='{}'.format(avail_workspaces(self, context)[i][1]), icon='SEQ_SPLITVIEW').wslayoutMenu=avail_workspaces(self, context)[i][1]
+
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Composition','NODE_COMPOSITING'),('Scripting','CONSOLE')]
+
+		## Custom order
+		for i in range(0,len(avail_workspaces(self, context))):
+			kmi = get_hotkey_entry_item(km, "workspace.set_layout", "WorkspaceSwitcher"+str(i))
+			if not kmi == None:
+				for k in range(0,len(icons)):
+					if kmi.properties.wslayoutMenu in icons[k][0]:
+						icon = icons[k][1]
+						break
+					else:
+						icon = 'PREFERENCES'
+
+				layout.operator("workspace.set_layout", text='{}'.format(kmi.properties.wslayoutMenu),icon=icon).wslayoutMenu=kmi.properties.wslayoutMenu
 		layout.separator()
 
 
-class QS_OT_SetWorkspace(bpy.types.Operator):
+class QS_OT_SetWorkspace(Operator):
 	"""Switches to the Workspace of the given name."""
 	bl_idname="workspace.set_layout"
 	bl_label="Switch to Workspace"
 
 	wslayoutMenu: bpy.props.EnumProperty(name = "Workspace", items = avail_workspaces)
-	#wslayoutPieMenu: bpy.props.EnumProperty(name = "Workspace", items = avail_workspaces)
 	layoutName: bpy.props.StringProperty()
 
 	def execute(self,context):
 		if self.wslayoutMenu == "Preferences":
 			bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
-			#bpy.context.preferences.active_section = 'ADDONS'
 			return{'FINISHED'}
 		else:
 			try:
@@ -230,6 +304,7 @@ class QS_OT_SetWorkspace(bpy.types.Operator):
 
 	def invoke(self,context,event):
 		return self.execute(context)
+
 
 ########################################################
 
@@ -251,6 +326,7 @@ class QS_PT_AddonPreferences(AddonPreferences):
 
 		row = layout.row()
 		row.prop(self, "qsMenus", expand=True)
+		#row.menu(QS_PT_presets.__name__, text=QS_PT_presets.bl_label)
 		if getattr(self,"qsMenus") in ("Workspaces"):
 			wm = bpy.context.window_manager
 			kc = wm.keyconfigs.user
@@ -281,14 +357,15 @@ class QS_PT_AddonPreferences(AddonPreferences):
 			split = box.split()
 			col = split.column()
 			col.label(text='Set Workspaces:')
-			for i in range(0,10):
+			for i in range(0,len(avail_workspaces(self, context))):
 	#			if km.keymap_items.keys()[i] == 'Switch to Workspace':
 				kmi = get_hotkey_entry_item(km, "workspace.set_layout", "WorkspaceSwitcher"+str(i))
-				if kmi:
-					col.context_pointer_set("keymap", km)
-					rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
-				else:
-					col.label(text="restore hotkeys from interface tab")
+				if not kmi == None:
+					if kmi:
+						col.context_pointer_set("keymap", km)
+						rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
+					else:
+						col.label(text="restore hotkeys from interface tab")
 			col.label(text='Set each shortcut in the dropdown menu named "Workspace"')
 
 		if getattr(self,"qsMenus") in ("Render Menu"):
@@ -312,6 +389,8 @@ class QS_PT_AddonPreferences(AddonPreferences):
 
 #Classes for register and unregister
 classes = (
+	AddPresetQuickSwitch,
+	QS_PT_presets,
 	QS_OT_QuickSwitchEngine,
 	QS_MT_WorkspaceSwitchPieMenu,
 	QS_MT_WorkspaceSwitchMenu,
