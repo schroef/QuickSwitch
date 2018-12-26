@@ -59,6 +59,10 @@
 ## Changed
 ## 23-12-18 - Quick render now visible in all screens
 
+## v.0.0.5
+## Added
+## 25-12-18 - Keep Mode stores last Object Interaction Mode and falls back to this instead of Default Workspace Object Interaction Mode
+
 
 #######################################################
 
@@ -80,7 +84,7 @@ from bl_operators.presets import AddPresetBase, PresetMenu
 #from . import AddPresetBase
 
 from bpy.types import (
-	Panel, WindowManager, AddonPreferences, Menu, Operator
+	Panel, WindowManager, AddonPreferences, Menu, Operator, Scene
 	)
 from bpy.props import (
 	EnumProperty, StringProperty, BoolProperty, IntProperty, FloatProperty
@@ -103,6 +107,26 @@ def avail_workspaces(self,context):
 
 
 addon_keymaps = []
+
+
+def defaultWSSmodes(self,context):
+	'''
+	Stores all default Object Modes when switching Workspaces
+	Used to set them back to default if "Keep Mode" is OFF
+	'''
+
+	ws = bpy.data.workspaces
+	wsModes =[("None","None","None")]
+	for ws in bpy.data.workspaces:
+		wsM = ws.object_mode
+		wsModes.append((ws.name, wsM, ws.name))
+	return wsModes
+
+
+bpy.types.Scene.qsDefWSmodes = bpy.props.EnumProperty(name = "Def WorkSpace Modes", items=defaultWSSmodes)
+
+bpy.types.Scene.qsKeepMode = bpy.props.BoolProperty(name = "Keep Mode", default=False, description="This stores the current Object Interaction Mode, now when you switch workspaces you will return to prior mode and not the default one.")
+
 
 def add_hotkey():
 	preferences = bpy.context.preferences
@@ -185,8 +209,9 @@ class QS_OT_QuickSwitchEngine(Menu):
 
 	def draw(self, context):
 		layout = self.layout
-		scene = bpy.context.scene
-		rd = context.scene.render
+
+		scene = context.scene
+		rd = scene.render
 
 		if rd.has_multiple_engines:
 			layout.prop(rd, "engine",  expand=True)
@@ -200,8 +225,8 @@ class QS_OT_QuickSwitchEngine(Menu):
 
 		layout.separator()
 
-		#layout.operator("render.view_show", text="View Render")
 		layout.operator("render.view_show", text="View Render")
+
 		layout.operator("render.play_rendered_anim", text="View Animation")
 		layout.prop_menu_enum(rd, "display_mode", text="Display Mode")
 
@@ -234,7 +259,8 @@ class QS_MT_WorkspaceSwitchPieMenu(Menu):
 
 	def draw(self, context):
 		layout = self.layout
-		pie = layout.menu_pie()
+		scene = context.scene
+		#pie = layout.menu_pie()
 
 		wm = bpy.context.window_manager
 		kc = wm.keyconfigs.user
@@ -252,7 +278,19 @@ class QS_MT_WorkspaceSwitchPieMenu(Menu):
 						break
 					else:
 						icon = 'PREFERENCES'
-				pie.operator("workspace.set_layout", text='{}'.format(kmi.properties.wslayoutMenu),icon=icon).wslayoutMenu=kmi.properties.wslayoutMenu
+				if i == 3:
+					pie = layout.menu_pie()
+					split = pie.split()
+					col = split.column(align=True)
+					#Plain ol Booleans
+					#row = col.row(align=True)
+					col.scale_y=1.5
+					col.scale_x=1.5
+					col.prop(scene,"qsKeepMode")
+					col.operator("workspace.set_layout", text='{}'.format(kmi.properties.wslayoutMenu),icon=icon).wslayoutMenu=kmi.properties.wslayoutMenu
+				else:
+					pie = layout.menu_pie()
+					pie.operator("workspace.set_layout", text='{}'.format(kmi.properties.wslayoutMenu),icon=icon).wslayoutMenu=kmi.properties.wslayoutMenu
 
 
 class QS_MT_WorkspaceSwitchMenu(Menu):
@@ -261,6 +299,10 @@ class QS_MT_WorkspaceSwitchMenu(Menu):
 
 	def draw(self, context):
 		layout = self.layout
+		scene = context.scene
+
+		layout.prop(scene,"qsKeepMode")
+		layout.separator()
 
 		wm = bpy.context.window_manager
 		kc = wm.keyconfigs.user
@@ -296,20 +338,32 @@ class QS_OT_SetWorkspace(Operator):
 	layoutName: bpy.props.StringProperty()
 
 	def execute(self,context):
+		scene = context.scene
+		ws = context.workspace
+
 		if self.wslayoutMenu == "Preferences":
 			bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
 			return{'FINISHED'}
 		else:
+			if scene.qsKeepMode:
+				obj = bpy.context.object
+				for obj in bpy.context.scene.objects:
+					if obj.type == 'MESH':
+						ws = context.workspace
+						if ws.object_mode != obj.mode:
+							ws.object_mode=obj.mode
+							break
+			else:
+				if ws.name == scene.qsDefWSmodes:
+					ws.object_mode = scene.qsDefWSmodes[item][1]
 			try:
-				window = context.window
 				bpy.context.window.workspace = bpy.data.workspaces[self.wslayoutMenu]
 				return{'FINISHED'}
 			except:
 				# except layout doesn't exists
 				self.report({'INFO'}, 'Workspace [{}] doesn\'t exist! Create it or pick another in addon settings.'.format(self.layoutName))
 
-	def invoke(self,context,event):
-		return self.execute(context)
+		return {'FINISHED'}
 
 
 ########################################################
@@ -325,6 +379,7 @@ class QS_PT_AddonPreferences(AddonPreferences):
 	def draw(self, context):
 		layout = self.layout
 		scene = context.scene
+		ws = context.workspace
 		col = layout.column()
 
 		col.label(text='Hotkeys:')
