@@ -1,10 +1,13 @@
 All notable changes to this project will be documented in this file.
 # Changelog
 
+## [0.0.6] - 2018-12-26
+### Changed
+- Fix for returning to default Workspace Object Interaction Modes
+
 ## [0.0.5] - 2018-12-25
 ### Added
 - Keep Mode stores last Object Interaction Mode and falls back to this instead of Default Workspace Object Interaction Mode
-
 
 ## [0.0.4] - 2018-12-23
 ### Changed

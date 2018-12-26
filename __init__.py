@@ -63,6 +63,11 @@
 ## Added
 ## 25-12-18 - Keep Mode stores last Object Interaction Mode and falls back to this instead of Default Workspace Object Interaction Mode
 
+## v.0.0.6
+## Changed
+## 26-12-18 - Fixed basic Workspace modes, using PropertyGroup & PointerProperty to store defaults
+
+
 
 #######################################################
 
@@ -71,7 +76,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch",
 	"author": "Rombout Versluijs",
-	"version": (0, 0, 4),
+	"version": (0, 0, 6),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -81,14 +86,16 @@ bl_info = {
 import bpy
 import rna_keymap_ui
 from bl_operators.presets import AddPresetBase, PresetMenu
+from bpy.app.handlers import persistent
 #from . import AddPresetBase
 
 from bpy.types import (
-	Panel, WindowManager, AddonPreferences, Menu, Operator, Scene
+	Panel, WindowManager, AddonPreferences, Menu, Operator, Scene, PropertyGroup
 	)
 from bpy.props import (
-	EnumProperty, StringProperty, BoolProperty, IntProperty, FloatProperty
+	EnumProperty, StringProperty, BoolProperty, IntProperty, PointerProperty
 	)
+
 
 def avail_workspaces(self,context):
 	'''
@@ -109,21 +116,86 @@ def avail_workspaces(self,context):
 addon_keymaps = []
 
 
-def defaultWSSmodes(self,context):
-	'''
-	Stores all default Object Modes when switching Workspaces
-	Used to set them back to default if "Keep Mode" is OFF
-	'''
+#def defaultWSSmodes(self, context):
+#	'''
+#	Stores all default Object Modes when switching Workspaces
+#	Used to set them back to default if "Keep Mode" is OFF
+#	'''
+#
+#	#ws = bpy.data.workspaces
+#	wsModes = []
+#	i = 0
+#	for ws in bpy.data.workspaces:
+#		wsM = ws.object_mode
+#		wsModes.append((str(i), wsM, ws.name))
+#		i+=1
+#	return wsModes
 
-	ws = bpy.data.workspaces
-	wsModes =[("None","None","None")]
-	for ws in bpy.data.workspaces:
-		wsM = ws.object_mode
-		wsModes.append((ws.name, wsM, ws.name))
-	return wsModes
+class QS_defaultWSSmodes(PropertyGroup):
+	Animation : StringProperty(
+		name = "Animation",
+		default='POSE')
+	Compositing : StringProperty(
+		name = "Compositing",
+		default='OBJECT')
+	Layout : StringProperty(
+		name = "Layout",
+		default='OBJECT')
+	Modeling : StringProperty(
+		name = "Modeling",
+		default='EDIT')
+	Rendering : StringProperty(
+		name = "Rendering",
+		default='OBJECT')
+	Scripting : StringProperty(
+		name = "Scripting",
+		default='OBJECT')
+	Sculpting : StringProperty(
+		name = "Sculpting",
+		default='SCULPT')
+	Shading : StringProperty(
+		name = "Shading",
+		default='OBJECT')
+	Texture_Paint : StringProperty(
+		name = "Texture_Paint",
+		default='TEXTURE_PAINT')
+	UV_Editing : StringProperty(
+		name = "UV_Editing",
+		default='EDIT')
 
+@persistent
+def on_scene_update(scene):
+	context = bpy.context
+	scene = context.scene
+	ws = context.workspace
+	settings = scene.qsWSsmode
 
-bpy.types.Scene.qsDefWSmodes = bpy.props.EnumProperty(name = "Def WorkSpace Modes", items=defaultWSSmodes)
+	settings.Animation = 'POSE'
+	settings.Compositing = 'OBJECT'
+	settings.Layout = 'OBJECT'
+	settings.Modeling = bpy.data.workspaces['Modeling'].object_mode
+	settings.Rendering = 'OBJECT'
+	settings.Scripting = 'OBJECT'
+	settings.Sculpting = 'SCULPT'
+	settings.Shading = 'OBJECT'
+	settings.Texture_Paint = 'TEXTURE_PAINT'
+	settings.UV_Editing = 'EDIT'
+
+#class SetWSmodes(Operator):
+#	bl_idname = "qs.set_ws_modes"
+#	bl_label = "Set"
+#	bl_description = "Saves standard workspace modes"
+#
+#	#@classmethod
+#	#def poll(clss, context):
+#	#    return ats_poll(context)
+#
+#	def execute(self, context):
+#		if do_set_tile_size(context):
+#			return {'FINISHED'}
+#		return {'CANCELLED'}
+
+#bpy.types.Scene.qsDefWSmodes = bpy.props.EnumProperty(name = "Def WorkSpace Modes", items=defaultWSSmodes)
 
 bpy.types.Scene.qsKeepMode = bpy.props.BoolProperty(name = "Keep Mode", default=False, description="This stores the current Object Interaction Mode, now when you switch workspaces you will return to prior mode and not the default one.")
 
@@ -354,8 +426,13 @@ class QS_OT_SetWorkspace(Operator):
 							ws.object_mode=obj.mode
 							break
 			else:
-				if ws.name == scene.qsDefWSmodes:
-					ws.object_mode = scene.qsDefWSmodes[item][1]
+				wsN = ws.name
+				if wsN == 'UV Editing':
+					wsN = 'UV_Editing'
+				if wsN == 'Texture Painting':
+					wsN = 'UV_Painting'
+
+				ws.object_mode = scene.qsWSsmode[wsN]
 			try:
 				bpy.context.window.workspace = bpy.data.workspaces[self.wslayoutMenu]
 				return{'FINISHED'}
@@ -382,6 +459,7 @@ class QS_PT_AddonPreferences(AddonPreferences):
 		ws = context.workspace
 		col = layout.column()
 
+		#layout.prop(scene, "qsDefWSmodes")
 		col.label(text='Hotkeys:')
 		col.label(text='Do NOT remove hotkeys, disable them instead!')
 
@@ -450,6 +528,7 @@ class QS_PT_AddonPreferences(AddonPreferences):
 
 #Classes for register and unregister
 classes = (
+	QS_defaultWSSmodes,
 	AddPresetQuickSwitch,
 	QS_PT_presets,
 	QS_OT_QuickSwitchEngine,
@@ -463,12 +542,18 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
+	bpy.types.Scene.qsWSsmode = PointerProperty(type=QS_defaultWSSmodes)
+
 	# hotkey setup
 	add_hotkey()
+
+	bpy.app.handlers.depsgraph_update_pre.append(on_scene_update)
 
 
 
 def unregister():
+	bpy.app.handlers.depsgraph_update_pre.remove(on_scene_update)
+
 	# handle the keymap
 	for km, kmi in addon_keymaps:
 		km.keymap_items.remove(kmi)
@@ -476,6 +561,8 @@ def unregister():
 
 	for cls in reversed(classes):
 		bpy.utils.unregister_class(cls)
+
+	del bpy.types.Scene.qsWSsmode
 
 
 if __name__ == "__main__":
