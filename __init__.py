@@ -67,6 +67,10 @@
 ## Changed
 ## 26-12-18 - Fixed basic Workspace modes, using PropertyGroup & PointerProperty to store defaults
 
+## v.0.0.7
+## Changed
+## 10-01-19 - Fixed typo in workspace Texture Paint > was TEXTURE_PAINTING
+
 
 
 #######################################################
@@ -76,7 +80,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch",
 	"author": "Rombout Versluijs",
-	"version": (0, 0, 6),
+	"version": (0, 0, 7),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -275,6 +279,33 @@ class QS_PT_presets(PresetMenu):
 #    draw = Menu.draw_preset
 
 
+
+import ssl
+import urllib.request
+
+
+class QS_OT_AddonUpdater(Operator):
+	"""Quick check addonupdater 2.80"""
+	bl_idname="qs.addon_updater"
+	bl_label="Addon Updater"
+
+	def execute(self,context):
+		print(ssl.OPENSSL_VERSION)
+		api_url = 'https://api.github.com'
+		user = "schroef"
+		repo = "theaforblender"
+
+		url = "{}{}{}{}{}{}".format(api_url,"/repos/",user,"/",repo,"/tags")
+
+		request = urllib.request.Request(url)
+		context = ssl._create_unverified_context()
+		result = urllib.request.urlopen(request,context=context) # issue occurs here within blender
+		result_string = result.read()
+		result.close()
+		get = result_string.decode()
+		print(get)
+		return {'FINISHED'}
+
 class QS_OT_QuickSwitchEngine(Menu):
 	bl_idname = "quick.switch_engine"
 	bl_label = "Render"
@@ -288,6 +319,8 @@ class QS_OT_QuickSwitchEngine(Menu):
 		if rd.has_multiple_engines:
 			layout.prop(rd, "engine",  expand=True)
 
+		layout.separator()
+		layout.operator("qs.addon_updater", text="Addon Updater", icon='FILE_REFRESH')
 		layout.separator()
 
 		layout.operator("render.render", text="Render Image", icon='RENDER_STILL').use_viewport = True
@@ -427,10 +460,11 @@ class QS_OT_SetWorkspace(Operator):
 							break
 			else:
 				wsN = ws.name
+				print(ws.name)
 				if wsN == 'UV Editing':
 					wsN = 'UV_Editing'
-				if wsN == 'Texture Painting':
-					wsN = 'UV_Painting'
+				if wsN == 'Texture Paint':
+					wsN = 'Texture_Paint'
 
 				ws.object_mode = scene.qsWSsmode[wsN]
 			try:
@@ -531,6 +565,7 @@ classes = (
 	QS_defaultWSSmodes,
 	AddPresetQuickSwitch,
 	QS_PT_presets,
+	QS_OT_AddonUpdater,
 	QS_OT_QuickSwitchEngine,
 	QS_MT_WorkspaceSwitchPieMenu,
 	QS_MT_WorkspaceSwitchMenu,
