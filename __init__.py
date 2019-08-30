@@ -83,6 +83,11 @@
 ## - Some keymaps not show in Preference panel
 ## - Clearing keymaps
 
+## v0.1.0
+## 2019-08-28
+### Added
+## - Viewport render & render animation to render menu
+
 #######################################################
 
 bl_info = {
@@ -90,7 +95,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch (see hotkeys)",
 	"author": "Rombout Versluijs",
-	"version": (0, 0, 9),
+	"version": (0, 1, 0),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -449,6 +454,13 @@ class QS_MT_QuickSwitchEngine(Menu):
 
 		layout.operator("render.play_rendered_anim", text="View Animation")
 		layout.prop_menu_enum(rd, "display_mode", text="Display Mode")
+
+		layout.separator()
+
+		layout.operator("render.opengl", text="Viewport Render Image", icon='RENDER_STILL')
+		props = layout.operator("render.opengl", text="Viewport Render Animation", icon='RENDER_ANIMATION')
+		props.animation = True
+		props.use_viewport = True
 
 		layout.separator()
 

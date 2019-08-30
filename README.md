@@ -4,11 +4,11 @@ QuickSwitch a helper to quick switch workspaces and view render menu in viewport
 
 > Some limitations are currently present due to Beta containing some bugs
 
-!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch_v009.jpg?v21-08-2019)
+!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch_v010.jpg?v28-08-2019)
 
 > Choose either Pie menu or WM menu
 
-!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v009.jpg)
+!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v010.jpg)
 
 > Customise shortscuts from addon preferences
 
