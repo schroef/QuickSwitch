@@ -1,6 +1,10 @@
 All notable changes to this project will be documented in this file.
 # Changelog
 
+## [0.1.1] - 2019-09-10
+### Added
+- Display Log Info (is missing in UI)
+
 ## [0.1.0] - 2019-08-28
 ### Added
 - Viewport render & render animation to render menu
@@ -56,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!--### Official Rigify Info-->
 
+[0.1.1]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.1.1
 [0.1.0]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.1.0
 [0.0.9]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.0.9
 [0.0.8]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.0.8

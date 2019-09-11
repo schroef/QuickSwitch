@@ -88,6 +88,11 @@
 ### Added
 ## - Viewport render & render animation to render menu
 
+## v0.1.1
+## 2019-09-10
+### Added
+## - Display Log Info (is missing in UI)
+
 #######################################################
 
 bl_info = {
@@ -95,7 +100,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch (see hotkeys)",
 	"author": "Rombout Versluijs",
-	"version": (0, 1, 0),
+	"version": (0, 1, 1),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -459,10 +464,10 @@ class QS_MT_QuickSwitchEngine(Menu):
 
 		layout.operator("render.opengl", text="Viewport Render Image", icon='RENDER_STILL')
 		props = layout.operator("render.opengl", text="Viewport Render Animation", icon='RENDER_ANIMATION')
-		props.animation = True
-		props.use_viewport = True
 
 		layout.separator()
+		if bpy.app.version > (2, 81):
+			layout.operator("screen.info_log_show", text="Display Log Info", icon='INFO')
 
 
 def get_hotkey_entry_item(km, kmi_name, kmi_value, properties):
