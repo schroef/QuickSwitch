@@ -1,6 +1,53 @@
 All notable changes to this project will be documented in this file.
 # Changelog
 
+## [0.2.1] - 2022-01-20
+### Fixed
+- Store view after looking at MACHIN3 method. I was close > Set store view as a default
+- If workspace are not in default names, revert to a default name and interaction mode > needs work for keymaps
+
+
+## [0.2.0] - 2021-08-05
+### Fixed
+- Menu operator for console > hode for OSX
+
+## [0.1.9] - 2021-03-05
+### Added
+- Operator to go to file location > missing since old blender
+
+## [0.1.9] - 2021-02-26
+### Added
+- Show console (Windows)
+- Viewport Render Frames
+
+## [0.1.8] - 2020-03-20
+### Fixed
+- Warning error Panel class
+
+
+## [0.1.7] - 2020-03-17
+### Fixed
+- Space in enumproperty
+
+## [0.1.6] - 2020-03-11
+### Fixed
+- Render Display changed named
+
+### Changed
+- Moved Render in to render section
+
+## [0.1.5] - 2020-01-15
+### Fixed
+- Viewport render animation operator was missing part
+
+## [0.1.4] - 2019-12-20
+### Added
+- Save preset
+
+## [0.1.3] - 2019-11-11
+### Added
+- Sync View Settings
+
 ## [0.1.1] - 2019-09-10
 ### Added
 - Display Log Info (is missing in UI)
@@ -60,6 +107,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!--### Official Rigify Info-->
 
+[1.2.1]:https://github.com/schroef/QuickSwitch/releases/tag/v.1.2.1
 [0.1.1]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.1.1
 [0.1.0]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.1.0
 [0.0.9]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.0.9
