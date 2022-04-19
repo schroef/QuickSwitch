@@ -155,10 +155,11 @@
 ## - Store view after looking at MACHIN3 method. I was close > Set store view as a default
 ## - If workspace are not in default names, revert to a default name and interaction mode > needs work for keymaps
 
-## v0.2.1
+## v0.2.2
 ## 2022-01-21
 ### Changed
-## - Try to save names workspaces, issue is still present when name is changed. Workspaces dont have any info order
+## - WIP try to storre workspaces using ID, workspace is saved by alphabetical list. Causes issue on name change
+##   ^ Try to save names workspaces, issue is still present when name is changed. Workspaces dont have any info order  
 
 """
 
