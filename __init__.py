@@ -161,6 +161,11 @@
 ## - WIP try to storre workspaces using ID, workspace is saved by alphabetical list. Causes issue on name change
 ##   ^ Try to save names workspaces, issue is still present when name is changed. Workspaces dont have any info order  
 
+## v0.2.3
+## 2022-09-23
+### Added
+## - Opening prefs operator shows addon expanded
+
 """
 
 	TODO
@@ -765,6 +770,14 @@ class QS_OT_SetWorkspace(Operator):
 			# Go to Quickswitch addon
 			bpy.context.preferences.active_section = 'ADDONS'
 			bpy.context.window_manager.addon_search = 'quickswitch'
+
+			# https://blender.stackexchange.com/questions/230698/question-about-managing-the-preferences-window-python
+			# Show expanded
+			import addon_utils
+			module_name = "node_presets"
+			bpy.ops.preferences.addon_expand(module=module_name)# get_addon_name() it is a small function that returns the name of the addon (For my convenience)
+			bpy.ops.preferences.addon_show(module=module_name) # Show my addon pref
+			
 			# force panel redraw
 			context.area.tag_redraw()
 

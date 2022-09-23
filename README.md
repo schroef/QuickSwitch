@@ -6,11 +6,11 @@ Keepmode will store the object interaction mode. So for example when your in mod
 
 > Some limitations are currently present due to Beta containing some bugs
 
-!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch-v1221.png?v20042022)
+!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch-v023.png?v20220923)
 
 > Choose either Pie menu or WM menu
 
-!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v011.jpg)
+!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v023.png?v20220923)
 
 > Customise shortscuts from addon preferences
 
