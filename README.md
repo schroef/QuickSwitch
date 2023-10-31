@@ -10,7 +10,7 @@ Keepmode will store the object interaction mode. So for example when your in mod
 
 > Choose either Pie menu or WM menu
 
-!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v023.png?v20220923)
+!['Example Addon Prefs'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/addon-preferences_v025.png?v20220923)
 
 > Customise shortscuts from addon preferences
 
