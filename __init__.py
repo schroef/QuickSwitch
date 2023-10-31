@@ -166,6 +166,16 @@
 ### Added
 ## - Opening prefs operator shows addon expanded
 
+## v0.2.4
+## 2023-05-09
+### Added
+## - shortcut for 3 button enum, handy for laptop users
+
+## v0.2.5
+## 2023-10-31
+### Added
+## - missing workspace names
+
 """
 
 	TODO
@@ -180,7 +190,7 @@ bl_info = {
 	"description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
 	"location": "3D VIEW > Quick Switch (see hotkeys)",
 	"author": "Rombout Versluijs",
-	"version": (0, 2, 2),
+	"version": (0, 2, 5),
 	"blender": (2, 80, 0),
 	"wiki_url": "https://github.com/schroef/quickswitch",
 	"tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -314,6 +324,9 @@ class QS_defaultWSSmodes(PropertyGroup):
 	Rendering : StringProperty(
 		name = "Rendering",
 		default='OBJECT')
+	Video_Editing : StringProperty(
+		name = "Video_Editing",
+		default='OBJECT')
 	Animation : StringProperty(
 		name = "Animation",
 		default='POSE')
@@ -330,6 +343,7 @@ class QS_defaultWSSmodes(PropertyGroup):
 @persistent
 def on_scene_update(scene):
 	context = bpy.context
+	# print("PERSISTENT update %s" % context.active_object)
 	scene = context.scene
 	ws = context.workspace
 	# settings = scene["qsWSsmode"]
@@ -345,6 +359,7 @@ def on_scene_update(scene):
 	settings.Texture_Paint = 'TEXTURE_PAINT'
 	settings.Shading = 'OBJECT'
 	settings.Animation = 'POSE'
+	settings.Video_Editing = 'OBJECT'
 	settings.Rendering = 'OBJECT'
 	settings.Compositing = 'OBJECT'
 	settings.Scripting = 'OBJECT'
@@ -417,21 +432,21 @@ bpy.types.Scene.qsKeepMode = bpy.props.BoolProperty(name = "Keep Mode", default=
 # 		return
 
 def ViewPort(wsn):
-		""" Return position, rotation data about a given view for the first space attached to it """
-		global viewLoc, distance, matrix, rotation
+	""" Return position, rotation data about a given view for the first space attached to it """
+	global viewLoc, distance, matrix, rotation
 
-		for i, area in enumerate(bpy.context.screen.areas):
-			if area.type == 'VIEW_3D':
-				wsp = bpy.context.window.workspace
-				rv3d = area.spaces[0].region_3d
-				viewLoc = rv3d.view_location
-				distance = rv3d.view_distance
-				matrix = rv3d.view_matrix
-				rotation = rv3d.view_rotation
-				#camera_pos = self.camera_position(matrix)
-				#rotation = rotation[0],rotation[1],rotation[2],rotation[3]
-				#return view_Loc, rotation, distance #camera_pos,
-				# print("Vloc: %s | Dist %s | Mtrx %s | Rot %s" % (viewLoc, distance, matrix, rotation))
+	for i, area in enumerate(bpy.context.screen.areas):
+		if area.type == 'VIEW_3D':
+			wsp = bpy.context.window.workspace
+			rv3d = area.spaces[0].region_3d
+			viewLoc = rv3d.view_location
+			distance = rv3d.view_distance
+			matrix = rv3d.view_matrix
+			rotation = rv3d.view_rotation
+			#camera_pos = self.camera_position(matrix)
+			#rotation = rotation[0],rotation[1],rotation[2],rotation[3]
+			#return view_Loc, rotation, distance #camera_pos,
+			# print("Vloc: %s | Dist %s | Mtrx %s | Rot %s" % (viewLoc, distance, matrix, rotation))
 
 
 class QS_Store3DView(PropertyGroup):
@@ -669,7 +684,7 @@ class QS_MT_WorkspaceSwitchPieMenu(Menu):
 		kc = wm.keyconfigs.user
 		km = kc.keymaps['Screen']
 		
-		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','UV'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE')]
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','UV'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Video Editing','SEQUENCE'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE')]
 
 		for i in range(0,8):
 			kmi = get_hotkey_entry_item(km, 'qs.workspace_set_layout', 'WorkspaceSwitcher'+str(i), 'layoutname')
@@ -718,7 +733,7 @@ class QS_MT_WorkspaceSwitchMenu(Menu):
 		#for i in range(0,len(get_names_workspaces(self, context))):
 		#	layout.operator("qs.workspace_set_layout", text='{}'.format(get_names_workspaces(self, context)[i][1]), icon='SEQ_SPLITVIEW').wslayoutMenu=get_names_workspaces(self, context)[i][1]
 
-		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE')]
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Video Editing','SEQUENCE'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE')]
 
 		## Custom order
 		for i in range(0,len(get_names_workspaces(self, context))):
@@ -774,7 +789,7 @@ class QS_OT_SetWorkspace(Operator):
 			# https://blender.stackexchange.com/questions/230698/question-about-managing-the-preferences-window-python
 			# Show expanded
 			import addon_utils
-			module_name = "node_presets"
+			module_name = "quickswitch"
 			bpy.ops.preferences.addon_expand(module=module_name)# get_addon_name() it is a small function that returns the name of the addon (For my convenience)
 			bpy.ops.preferences.addon_show(module=module_name) # Show my addon pref
 			
@@ -793,11 +808,18 @@ class QS_OT_SetWorkspace(Operator):
 							break
 			else:
 				wsN = ws.name
+				# print(type(wsN))
+				# wsN.replace("\s", "_")
+				# wsN.replace('/\s/g', '_')
+				wsN = wsN.replace(' ','_')
+				# print(wsN)
 				#print(ws.name)
-				if wsN == 'UV Editing':
-					wsN = 'UV_Editing'
-				if wsN == 'Texture Paint':
-					wsN = 'Texture_Paint'
+				# if wsN == 'UV Editing':
+				# 	wsN = 'UV_Editing'
+				# if wsN == 'Texture Paint':
+				# 	wsN = 'Texture_Paint'
+				# if wsN == 'Video Editting':
+				# 	wsN = 'Video_Editting'
 			
 				# Set interaction mode
 				ws.object_mode = scene.qsWSsmode[wsN]
@@ -994,7 +1016,32 @@ def ui_add_menu(self, context):
 	row.operator(QD_OT_Sync_ViewData.bl_idname, icon="UV_SYNC_SELECT",text="")
 	# row.operator(QD_OT_Sync_ViewData.bl_idname, icon="UV_SYNC_SELECT")
 	row.operator(QD_OT_Reset_ViewData.bl_idname, icon="LOOP_BACK", text="")
-    
+
+
+
+class V3D_OT_EmuThreeButton(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "view3d.toggle_emuthreebutton"
+    bl_label = "Toggle Emulate 3 Button Mouse"
+
+    def execute(self, context):
+        bpy.ops.wm.context_toggle(data_path = "preferences.inputs.use_mouse_emulate_3_button")
+        return {'FINISHED'}
+
+
+def Header_MT_EmuThreeButton(self, context):
+	layout = self.layout
+	prefs = context.preferences        
+	row = layout.row()    
+	row.operator("view3d.toggle_emuthreebutton",text="",icon='MOUSE_MMB', depress=(getattr(prefs.inputs,"use_mouse_emulate_3_button")))
+	# layout.prop(prefs.inputs, "use_mouse_emulate_3_button",text="", icon='MOUSE_MMB', toggle=True)
+	# this cant be added to quick favs nor shirtcut added
+	# op = layout.operator("wm.context_toggle",text="", icon='MOUSE_MMB')
+	# op.data_path = "preferences.inputs.use_mouse_emulate_3_button"
+	
+
+
+
 ########################################################
 
 
@@ -1096,6 +1143,7 @@ classes = [
 	QS_MT_WorkspaceSwitchMenu,
 	QS_OT_SetWorkspace,
 	QS_OT_path_open,
+	V3D_OT_EmuThreeButton,
 ]
 
 def register():
@@ -1114,14 +1162,14 @@ def register():
 	bpy.app.handlers.depsgraph_update_pre.append(on_scene_update)
 	# bpy.app.handlers.depsgraph_update_pre.append(on_ws_switch)
 	bpy.types.VIEW3D_PT_view3d_properties.prepend(ui_add_menu)
-
+	bpy.types.VIEW3D_HT_header.append(Header_MT_EmuThreeButton)
 
 
 def unregister():
 	bpy.app.handlers.depsgraph_update_pre.remove(on_scene_update)
 	# bpy.app.handlers.depsgraph_update_pre.remove(on_ws_switch)
 	bpy.types.VIEW3D_PT_view3d_properties.remove(ui_add_menu)
-	
+	bpy.types.VIEW3D_HT_header.remove(Header_MT_EmuThreeButton)
 	# handle the keymap
 	for km, kmi in addon_keymaps:
 		print("QS: %s - %s" % (km,kmi))

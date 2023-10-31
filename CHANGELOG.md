@@ -1,6 +1,16 @@
 All notable changes to this project will be documented in this file.
 # Changelog
 
+## v0.2.5
+## 2023-10-31
+### Added
+- missing workspace names causing error when switching
+
+## v0.2.4
+## 2023-05-09
+### Added
+- shortcut for 3 button enum, handy for laptop users
+
 ## [0.2.3] - 2022-09-23
 ### Added
 - Opening prefs operator shows addon expanded
