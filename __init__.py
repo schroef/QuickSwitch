@@ -43,6 +43,8 @@
 ## 20-12-18	- updated preferences to preferences
 ## 22-12-18 - Merge QuickSwitch into this one
 ##
+## TODO
+## - Add explanation about saving keymap, otherwise we loose presets quickswitch buttons
 
 ## QuickSwitch Merged
 ##
@@ -327,6 +329,9 @@ class QS_defaultWSSmodes(PropertyGroup):
 	Video_Editing : StringProperty(
 		name = "Video_Editing",
 		default='OBJECT')
+	Motion_Tracking : StringProperty(
+		name = "Motion_Tracking",
+		default='OBJECT')
 	Animation : StringProperty(
 		name = "Animation",
 		default='POSE')
@@ -338,6 +343,9 @@ class QS_defaultWSSmodes(PropertyGroup):
 		default='OBJECT')
 	Default : StringProperty(
 		name = "Default",
+		default='OBJECT')
+	Blank : StringProperty(
+		name = "",
 		default='OBJECT')
 
 @persistent
@@ -360,6 +368,7 @@ def on_scene_update(scene):
 	settings.Shading = 'OBJECT'
 	settings.Animation = 'POSE'
 	settings.Video_Editing = 'OBJECT'
+	settings.Motion_Tracking = 'OBJECT'
 	settings.Rendering = 'OBJECT'
 	settings.Compositing = 'OBJECT'
 	settings.Scripting = 'OBJECT'
@@ -684,7 +693,7 @@ class QS_MT_WorkspaceSwitchPieMenu(Menu):
 		kc = wm.keyconfigs.user
 		km = kc.keymaps['Screen']
 		
-		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','UV'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Video Editing','SEQUENCE'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE')]
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','UV'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Video Editing','SEQUENCE'),('Motion Tracking','TRACKER'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE'),('','WORKSPACE'),('Preferences', 'PREFERENCES')]
 
 		for i in range(0,8):
 			kmi = get_hotkey_entry_item(km, 'qs.workspace_set_layout', 'WorkspaceSwitcher'+str(i), 'layoutname')
@@ -733,7 +742,7 @@ class QS_MT_WorkspaceSwitchMenu(Menu):
 		#for i in range(0,len(get_names_workspaces(self, context))):
 		#	layout.operator("qs.workspace_set_layout", text='{}'.format(get_names_workspaces(self, context)[i][1]), icon='SEQ_SPLITVIEW').wslayoutMenu=get_names_workspaces(self, context)[i][1]
 
-		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Video Editing','SEQUENCE'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE')]
+		icons = [('Layout','VIEW3D'),('Modeling','VIEW3D'),('Sculpting','SCULPTMODE_HLT'),('UV Editing','GROUP_UVS'),('Texture Paint','IMAGE'),('Shading','SHADING_RENDERED'),('Animation','RENDER_ANIMATION'),('Video Editing','SEQUENCE'),('Motion Tracking','TRACKER'),('Rendering','RENDER_STILL'),('Compositing','NODE_COMPOSITING'),('Scripting','CONSOLE'),('Default','WORKSPACE'),('','WORKSPACE'),('Preferences', 'PREFERENCES')]
 
 		## Custom order
 		for i in range(0,len(get_names_workspaces(self, context))):
@@ -744,6 +753,8 @@ class QS_MT_WorkspaceSwitchMenu(Menu):
 						icon = icons[k][1]
 						break
 					elif kmi.properties.wslayoutMenu == "Preferences":
+						icon = 'PREFERENCES'
+					elif kmi.properties.wslayoutMenu == "":
 						icon = 'PREFERENCES'
 					else:
 						icon = 'WORKSPACE'
