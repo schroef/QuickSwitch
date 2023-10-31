@@ -45,6 +45,7 @@
 ##
 ## TODO
 ## - Add explanation about saving keymap, otherwise we loose presets quickswitch buttons
+## - Default to OBJECT_MODE if workspace has no mode set
 
 ## QuickSwitch Merged
 ##
@@ -833,7 +834,10 @@ class QS_OT_SetWorkspace(Operator):
 				# 	wsN = 'Video_Editting'
 			
 				# Set interaction mode
-				ws.object_mode = scene.qsWSsmode[wsN]
+				try:
+					ws.object_mode = scene.qsWSsmode[wsN]
+				except:
+					ws.object_mode = 'OBJECT'
 
 			# if not ws.name in scene.qsWSsmode:
 			# 	print("default mode")

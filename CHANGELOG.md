@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ## [0.2.5] - 2023-10-31
 ### Added
 - missing workspace names causing error when switching
+### Fixed
+- Issue when switching to workspace which has not been hardcoded 
 
 ## [0.2.4] - 2023-05-09
 ### Added
