@@ -6,7 +6,7 @@ Keepmode will store the object interaction mode. So for example when your in mod
 
 > Some limitations are currently present due to Beta containing some bugs
 
-!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch-v0266.png?v202500404)
+!['Look UI'](https://raw.githubusercontent.com/wiki/schroef/quickswitch/images/quickswitch-v0267.png?v202500404)
 
 > Choose either Pie menu or WM menu
 
