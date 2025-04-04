@@ -1,6 +1,13 @@
 All notable changes to this project will be documented in this file.
 # Changelog
 
+## [0.2.6.7] - 2025-04-04
+### Changed
+- align object to 3d cursors now can added orientation
+- align light to 3d cursors also has rotation
+- light power uses same precision as light data propery panel
+- light size x an y use meters
+- changed precision of props to match bledner GUI props
 
 ## [0.2.6.6] - 2025-03-12
 ### Fixed

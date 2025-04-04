@@ -31,6 +31,14 @@
 
 Keep a Changelog
 
+## [0.2.6.7] - 2025-04-04
+### Changed
+- align object to 3d cursors now can added orientation
+- align light to 3d cursors also has rotation
+- light power uses same precision as light data propery panel
+- light size x an y use meters
+- changed precision of props to match bledner GUI props
+
 ## [0.2.6.6] - 2025-03-12
 ### Fixed
 - operator to quick open prefences and other addons by adding name
@@ -223,7 +231,7 @@ bl_info = {
     "description": "QuickSwitch is a little helper to make it easier to switch render engines & workspaces",
     "location": "3D VIEW > Quick Switch (see hotkeys)",
     "author": "Rombout Versluijs",
-    "version": (0, 2, 6, 6),
+    "version": (0, 2, 6, 7),
     "blender": (2, 90, 0),
     "wiki_url": "https://github.com/schroef/quickswitch",
     "tracker_url": "https://github.com/schroef/quickswitch/issues",
@@ -1131,13 +1139,15 @@ def Header_MT_EmuThreeButton(self, context):
 # import bpy
 # from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
 
-def orientateLight(context, color,energy,distance,shape,size, size_y):
-    bpy.ops.transform.translate(value=(0, 0, distance), orient_type='NORMAL')
+def orientateLight(context, color,energy,distance, orientation, rot,shape,size, size_y):
+    bpy.ops.transform.translate(value=(0, 0, distance), orient_type=orientation)
     aLiOb = context.active_object.data #bpy.data.lights[context.active_object.name]
     aLiOb.color = color
     aLiOb.energy = energy
     aLiOb.shape = shape
     aLiOb['distance'] = distance
+    aob = context.active_object
+    aob.rotation_euler = rot
     if (shape =='RECTANGLE'):
         aLiOb.size = size
         aLiOb.size_y = size_y
@@ -1169,15 +1179,37 @@ class QS_OT_OrientateLight(bpy.types.Operator):
     energy : bpy.props.FloatProperty(
         name = "Energy",
         default = 10,
+        precision=5,
         subtype="POWER"
     )
           
     distance : bpy.props.FloatProperty(
         name = "Distance",
         default = 2,
+        precision = 4,
         subtype="DISTANCE"
         )
-        
+    
+    orientation : bpy.props.EnumProperty(
+        name = "Orientation",
+        default = 'NORMAL',
+        items = (
+            ("GLOBAL", "Global", "Align the transformation axes to world space", "ORIENTATION_GLOBAL",0),
+            ("LOVAL", "Local", "Align the transformation axes to the select objects loval space", "ORIENTATION_LOCAL",1),
+            ("NORMAL", "Normal", "Align the transformation axes to the average normal of selected elements (bone y for pose mode)", "ORIENTATION_NORMAL",2),
+            ("GIMBAL", "Gimbal", "Align each xis to Euler rotation axis as used for input", "ORIENTATION_GIMBAL",3),
+            ("VIEW", "View", "Align the transformation axes to the Window", "ORIENTATION_VIEW",4),
+            ("CURSOR", "Cursor", "Align the transformation axes to the 3D Cursor", "ORIENTATION_CURSOR",5),
+            ("PARENT", "Parent", "Align the transformation axes to the object's parent space", "ORIENTATION_PARENT",6),
+            )
+        )
+    
+    rot : bpy.props.FloatVectorProperty(
+        name = "Rotation",
+        default = (0,0,0),
+        subtype="EULER"
+        )    
+
     shape : bpy.props.EnumProperty(
         items=(("SQUARE", "Square", "SQUARE"),("RECTANGLE", "Rectangle", "RECTANGLE"),("DISK", "Disk", "DISK"),("ELLIPSE", "Ellipse", "ELLIPSE")),
         name="Shape",
@@ -1188,14 +1220,19 @@ class QS_OT_OrientateLight(bpy.types.Operator):
     size : bpy.props.FloatProperty(
         name = "Size",
         default = 1,
-        subtype="FACTOR"
+        precision = 4,
+        subtype="FACTOR",
+        unit='LENGTH'
         )
     size_y : bpy.props.FloatProperty(
         name = "Size Y",
         default = 1,
-        subtype="FACTOR"
+        precision = 4,
+        subtype="FACTOR",
+        unit='LENGTH'
         )
 
+    
     def execute(self, context):
         scnd = bpy.data.scenes
         scn = context.scene
@@ -1206,8 +1243,8 @@ class QS_OT_OrientateLight(bpy.types.Operator):
 
         aLiOb = aob.data #bpy.data.lights[context.active_object.name]
         aob.location = loc
-        aob.rotation_euler = rot
-        orientateLight(context, self.color,self.energy, self.distance, self.shape, self.size, self.size_y)
+        aob.rotation_euler = self.rot
+        orientateLight(context, self.color,self.energy, self.distance, self.orientation, self.rot, self.shape, self.size, self.size_y)
         
              
         return {'FINISHED'}
@@ -1226,6 +1263,9 @@ class QS_OT_OrientateLight(bpy.types.Operator):
         self.color = aLiOb.color
         self.energy=aLiOb.energy
         self.shape = aLiOb.shape
+        self.orientation = 'NORMAL'
+        self.rot = rot
+
         if (self.shape =='RECTANGLE'):
             self.size = aLiOb.size
             self.size_y = aLiOb.size_y
@@ -1282,12 +1322,23 @@ class QS_OT_OrientateLight(bpy.types.Operator):
         if (self.shape =='RECTANGLE'):
             layout.prop(self, "size_y")
         layout.prop(self, "distance")
+        layout.prop(self, "orientation")
+        layout.prop(self, "rot")
 
 def menu_func_QS_OT_OrientateLight(self, context):
     self.layout.operator_context = "INVOKE_DEFAULT"
     self.layout.operator(QS_OT_OrientateLight.bl_idname, text=QS_OT_OrientateLight.bl_label, icon='LIGHT_AREA')
 
 
+
+def orientateObject(context, distance, orientation):
+    bpy.ops.transform.translate(value=(0, 0, distance), orient_type=orientation)
+    # aLiOb = context.active_object.data #bpy.data.lights[context.active_object.name]
+    # aLiOb.color = color
+    # aLiOb.energy = energy
+    # aLiOb.shape = shape
+    # aLiOb['distance'] = distance
+    
 
 class QS_OT_OrientateOB3Dcursor(bpy.types.Operator):
     """Tooltip"""
@@ -1319,23 +1370,36 @@ class QS_OT_OrientateOB3Dcursor(bpy.types.Operator):
         default = (0,0,0),
         subtype="EULER"
         )    
+    
+    orientation : bpy.props.EnumProperty(
+        name = "Orientation",
+        default = 'NORMAL',
+        items = (
+            ("GLOBAL", "Global", "Align the transformation axes to world space", "ORIENTATION_GLOBAL",0),
+            ("LOVAL", "Local", "Align the transformation axes to the select objects loval space", "ORIENTATION_LOCAL",1),
+            ("NORMAL", "Normal", "Align the transformation axes to the average normal of selected elements (bone y for pose mode)", "ORIENTATION_NORMAL",2),
+            ("GIMBAL", "Gimbal", "Align each xis to Euler rotation axis as used for input", "ORIENTATION_GIMBAL",3),
+            ("VIEW", "View", "Align the transformation axes to the Window", "ORIENTATION_VIEW",4),
+            ("CURSOR", "Cursor", "Align the transformation axes to the 3D Cursor", "ORIENTATION_CURSOR",5),
+            ("PARENT", "Parent", "Align the transformation axes to the object's parent space", "ORIENTATION_PARENT",6),
+            )
+        )
 
     def execute(self, context):
         scnd = bpy.data.scenes
         scn = context.scene
         cursor = scnd[scn.name].cursor
         loc = cursor.location
-        rot = self.rot
-        # rot = (cursor.rotation_euler[0]+self.rot[0], cursor.rotation_euler[1]+self.rot[1],cursor.rotation_euler[2]+self.rot[2])
+        rot = cursor.rotation_euler
         aob = context.active_object
-        loc = (loc[0], loc[1],loc[2] + self.distance)
         scale = (self.scale)
-        aLiOb = aob.data #bpy.data.lights[context.active_object.name]
-        aob.location = loc
-        aob.rotation_euler = rot
-        aob.scale = self.scale
-        # orientateLight(context, self.color,self.energy, self.distance, self.shape, self.size, self.size_y)
         
+        # loc = (loc[0], loc[1],loc[2] + self.distance)
+        aob.location = loc
+        aob.rotation_euler = self.rot
+        aob.scale = self.scale
+        orientation = self.orientation
+        orientateObject(context, self.distance, orientation)
              
         return {'FINISHED'}
     
@@ -1353,6 +1417,7 @@ class QS_OT_OrientateOB3Dcursor(bpy.types.Operator):
         aob.rotation_euler = rot
         self.scale = aob.scale
         self.rot = aob.rotation_euler
+        self.orientation = 'NORMAL'
         # aLiOb = aob.data #bpy.data.lights[context.active_object.name]
         # self.color = aLiOb.color
         # self.energy=aLiOb.energy
@@ -1379,8 +1444,9 @@ class QS_OT_OrientateOB3Dcursor(bpy.types.Operator):
         layout.use_property_decorate = False
 
         layout.prop(self, "distance")
-        layout.prop(self, "scale")
+        layout.prop(self, "orientation")
         layout.prop(self, "rot")
+        layout.prop(self, "scale")
 
 def menu_func_QS_OT_OrientateSelection(self, context):
     self.layout.operator_context = "INVOKE_DEFAULT"
