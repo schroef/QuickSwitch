@@ -35,9 +35,9 @@ Keep a Changelog
 ### Changed
 - align object to 3d cursors now can added orientation
 - align light to 3d cursors also has rotation
-- light power uses same precision as light data propery panel
+- light power uses same precision as light data property panel
 - light size x an y use meters
-- changed precision of props to match bledner GUI props
+- changed precision of props to match blender GUI props
 
 ## [0.2.6.6] - 2025-03-12
 ### Fixed
@@ -1195,7 +1195,7 @@ class QS_OT_OrientateLight(bpy.types.Operator):
         default = 'NORMAL',
         items = (
             ("GLOBAL", "Global", "Align the transformation axes to world space", "ORIENTATION_GLOBAL",0),
-            ("LOVAL", "Local", "Align the transformation axes to the select objects loval space", "ORIENTATION_LOCAL",1),
+            ("LOCAL", "Local", "Align the transformation axes to the select objects local space", "ORIENTATION_LOCAL",1),
             ("NORMAL", "Normal", "Align the transformation axes to the average normal of selected elements (bone y for pose mode)", "ORIENTATION_NORMAL",2),
             ("GIMBAL", "Gimbal", "Align each xis to Euler rotation axis as used for input", "ORIENTATION_GIMBAL",3),
             ("VIEW", "View", "Align the transformation axes to the Window", "ORIENTATION_VIEW",4),
@@ -1376,7 +1376,7 @@ class QS_OT_OrientateOB3Dcursor(bpy.types.Operator):
         default = 'NORMAL',
         items = (
             ("GLOBAL", "Global", "Align the transformation axes to world space", "ORIENTATION_GLOBAL",0),
-            ("LOVAL", "Local", "Align the transformation axes to the select objects loval space", "ORIENTATION_LOCAL",1),
+            ("LOCAL", "Local", "Align the transformation axes to the select objects local space", "ORIENTATION_LOCAL",1),
             ("NORMAL", "Normal", "Align the transformation axes to the average normal of selected elements (bone y for pose mode)", "ORIENTATION_NORMAL",2),
             ("GIMBAL", "Gimbal", "Align each xis to Euler rotation axis as used for input", "ORIENTATION_GIMBAL",3),
             ("VIEW", "View", "Align the transformation axes to the Window", "ORIENTATION_VIEW",4),

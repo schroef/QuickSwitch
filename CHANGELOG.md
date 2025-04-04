@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - align object to 3d cursors now can added orientation
 - align light to 3d cursors also has rotation
-- light power uses same precision as light data propery panel
+- light power uses same precision as light data property panel
 - light size x an y use meters
-- changed precision of props to match bledner GUI props
+- changed precision of props to match blender GUI props
 
 ## [0.2.6.6] - 2025-03-12
 ### Fixed
