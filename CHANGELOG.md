@@ -1,13 +1,38 @@
 All notable changes to this project will be documented in this file.
 # Changelog
 
-## [0.2.5] - 2023-10-31
-### Added
-- missing workspace names causing error when switching
-### Fixed
-- Issue when switching to workspace which has not been hardcoded 
 
-## [0.2.4] - 2023-05-09
+## [0.2.6.6] - 2025-03-12
+### Fixed
+- operator to quick open prefences and other addons by adding name
+
+### Added
+- Quick find operator > open search and addon name it opens preference search with addon filled in
+- Restart operator > useful for devolopers
+
+## [0.2.6.5] - 2024-11-12
+### Added
+- operator to quickly orientate selection to 3dview cursor. Set scale and distance 
+
+### Changed
+- Temp removed maxid checker for store screen workspace (get_names_workspaces) names, issue arose
+
+## [0.2.6.5] - 2024-11-11
+### Fixed
+- Issue with storeview viewloc going from Compositor to 3Dview
+
+## v0.2.6
+## 2024-04-04
+### Fixed
+- Store View issue, wasnt working some since new blender update (+/- 3.6)
+
+## v0.2.5
+## 2023-02-27
+### Added
+- operator to quickly orientate lights to 3dview cursor 
+
+## v0.2.4
+## 2023-05-09
 ### Added
 - shortcut for 3 button enum, handy for laptop users
 
@@ -126,9 +151,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!--### Official Rigify Info-->
 
-[0.2.5]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.5
-[0.2.3]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.3
-[0.2.2]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.2
+[0.2.6.6]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.6.6
+[0.2.6.5]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.6.5
+[0.2.1]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.3
+[0.2.1]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.2.2
 [0.1.1]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.1.1
 [0.1.0]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.1.0
 [0.0.9]:https://github.com/schroef/QuickSwitch/releases/tag/v.0.0.9
